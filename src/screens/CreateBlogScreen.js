@@ -8,9 +8,10 @@ const CreateBlogScreen = ({navigation}) => {
   return (
     <BlogPostForm
       type="create"
-      onSubmit={(title, content) =>
-        addBlogPost(title, content, () => navigation.navigate('Index'))
-      }
+      onSubmit={async (title, content) => {
+        await addBlogPost(title, content);
+        navigation.navigate('Index');
+      }}
     />
   );
 };

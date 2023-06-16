@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useEffect, useCallback} from 'react';
 import {
   Button,
   FlatList,
@@ -9,10 +9,11 @@ import {
 } from 'react-native';
 import {Context as BlogContext} from '../context/BlogContext';
 import Icon from 'react-native-vector-icons/dist/Feather';
-const IndexScreen = ({navigation}) => {
-  const {state, addBlogPost, deleteBlogPost} = useContext(BlogContext);
+import {useFocusEffect} from '@react-navigation/native';
 
-  React.useEffect(() => {
+const IndexScreen = ({navigation}) => {
+  const {state, getBlogPosts, deleteBlogPost} = useContext(BlogContext);
+  useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity onPress={() => navigation.navigate('Create Blog')}>
@@ -21,13 +22,20 @@ const IndexScreen = ({navigation}) => {
       ),
     });
   }, [navigation]);
+  useFocusEffect(
+    useCallback(() => {
+      getBlogPosts();
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []),
+  );
+
   return (
     <View>
       <Text style={styles.title}>All Blog Posts</Text>
       {state.length > 0 ? (
         <FlatList
           data={state}
-          keyExtractor={blogPost => blogPost.title}
+          keyExtractor={blogPost => blogPost.id}
           renderItem={({item}) => {
             return (
               <TouchableOpacity
